@@ -15,8 +15,8 @@ class FunDict(Generic[KI, VI]):
         if d is None:
             d = dict()
         self.d = d
-    	if not isinstance(self.d, dict):
-	    self.d = dict(self.d)
+        if not isinstance(self.d, dict):
+            self.d = dict(self.d)
 
     def py(self) -> Dict[KI, VI]:
         return self.d
@@ -26,14 +26,14 @@ class FunDict(Generic[KI, VI]):
             yield (k, v)
 
     def to_list(self) -> 'FunList[Tuple[KI, VI]]':
-        from collection.funlist import FunList
+        from funpy.funlist import FunList
         return FunList(self.py_iter())
 
     def map(self, func: Callable[[KI, VI], Tuple[KO, VO]]) -> 'FunDict[KO, VO]':
         return FunDict(dict(IteratorUtil.map_pairs(self.py_iter(), func)))
 
     def map_to_list(self, func: Callable[[KI, VI], VO]) -> 'FunList[VO]':
-        from collection.funlist import FunList
+        from funpy.funlist import FunList
         return FunList(IteratorUtil.map_pairs(self.py_iter(), func))
 
     def filter(self, func: Callable[[KI, VI], bool]) -> 'FunDict[KI, VI]':
@@ -44,6 +44,12 @@ class FunDict(Generic[KI, VI]):
 
     def __str__(self):
         return str(self.py())
+
+    def __unicode__(self):
+        return self.__str__()
+
+    def __repr__(self):
+        return self.__str__()        
 
     def print(self, msg="") -> 'FunDict[KI, VI]':
         logging.getLogger(self.__class__.__name__).info("%s %s", msg, self.__str__())

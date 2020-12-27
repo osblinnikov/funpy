@@ -33,8 +33,8 @@ class FunList(Generic[I]):
     def map(self, func: Callable[[I], O]) -> 'FunList[O]':
         return FunList(list(IteratorUtil.map(self.l, func)))
 
-    def map_to_dict(self, func: Callable[[I], Tuple[KO, VO]]) -> 'FunDict[KO, VO]':
-        from collection.fundict import FunDict
+    def map_to_dict(self, func: Callable[[I], Tuple[KO, VO]] = None) -> 'FunDict[KO, VO]':
+        from funpy.fundict import FunDict
         return FunDict(dict(IteratorUtil.map(self.l, func)))
 
     def map_pair(self, func: Callable[[Tuple[KO, VO]], O]) -> 'FunList[O]':
@@ -49,6 +49,12 @@ class FunList(Generic[I]):
     def __str__(self):
         return str(self.py())
 
+    def __unicode__(self):
+        return self.__str__()
+
+    def __repr__(self):
+        return self.__str__()
+
     def print(self, msg="") -> 'FunList[I]':
         logging.getLogger(self.__class__.__name__).info("%s %s", msg, self.__str__())
         return self
@@ -58,3 +64,15 @@ class FunList(Generic[I]):
 
     def sum(self):
         return sum(self.py())
+
+    def groupby(self, keyFunc: Callable[[I], O]) -> 'FunList[(O, FunList[I])]':
+        from itertools import groupby
+        seq = sorted(self.py(), key = keyFunc)
+        return FunList([(k, FunList(list(g))) for k, g in groupby(seq, keyFunc)])
+
+    def groupby_to_dict(self, keyFunc: Callable[[I], O]) -> 'FunDict[O, FunList[I]]':
+        from itertools import groupby
+        from funpy.fundict import FunDict
+        seq = sorted(self.py(), key = keyFunc)
+        return FunDict({k: FunList(list(g)) for k, g in groupby(seq, keyFunc)})
+

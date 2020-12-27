@@ -23,3 +23,11 @@ class TestFunList(TestCase):
                )
 
         assert res == {2: 3}
+
+    def test_groupby(self):
+      l = FunList([[1, 2, 3], [2, 3, 4], [3, 4, 5], [1, 3, 4], [3, 5, 6]])
+      assert l.groupby(lambda x: x[0]).print().map(lambda x: x[0]).py() == [1, 2, 3]
+
+      g = l.groupby_to_dict(lambda x: x[0]).print()
+      assert g.map_to_list(lambda k, v: k).__str__() == str([1, 2, 3])
+      assert g.map_to_list(lambda k, v: v).__str__() == str([[[1, 2, 3], [1, 3, 4]], [[2, 3, 4]], [[3, 4, 5], [3, 5, 6]]])
